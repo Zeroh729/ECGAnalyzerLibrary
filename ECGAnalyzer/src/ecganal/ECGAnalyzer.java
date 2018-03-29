@@ -3,7 +3,7 @@ package ecganal;
 import java.util.ArrayList;
 
 public class ECGAnalyzer {
-    private static float[][] data;
+    private static double[][] data;
 
     public ECGAnalyzer() {
         System.out.println("Hello world! I am built!");
@@ -11,7 +11,7 @@ public class ECGAnalyzer {
     
     public static void setData(String s){
         String[] dataline = s.split("\n");
-        data = new float[dataline.length][2];
+        data = new double[dataline.length][2];
         int i = 0;
         for(String line : dataline){
             String[] xydata = line.split(",");
@@ -22,11 +22,11 @@ public class ECGAnalyzer {
         }
     }
     
-    public static void setData(float[][] data){
+    public static void setData(double[][] data){
         ECGAnalyzer.data = data;
     }
     
-    public static float[][] getData(){
+    public static double[][] getData(){
         return data;
     }
 }
