@@ -1,8 +1,11 @@
 package ecganal;
 
+import java.util.ArrayList;
+
 public class DSPFunction {
     private static double[][] input;
     private static double[][] output;
+    private static ArrayList<Integer> rpeaksI;
     
     public enum Type{
         LOWPASSFILTER, HIGHPASSFILTER, DERIVATIVE, SQUARING, ALL
@@ -31,14 +34,19 @@ public class DSPFunction {
     }
     
     private static double[][] allFilter(){
+//        output = derivative();
+//        lowPassFilter();
+        output = highPassFilter();
         Filter filter = new Filter();
         for(int i = 0; i < input.length; i++){
-            output[i][1] =  filter.LowPassFilter(input[i][1]);
-            output[i][1] =  filter.HighPassFilter(output[i][1]);
-            output[i][1] =  filter.diffFilterNext(output[i][1]);
+//            output[i][1] =  filter.diffFilterNext(output[i][1]);
+//            output[i][1] =  filter.LowPassFilter(input[i][1]);
+//            output[i][1] =  filter.HighPassFilter(output[i][1]);
+
             output[i][1] =  filter.squareNext(output[i][1]);
-            output[i][1] =  filter.movingWindowNext(output[i][1]);
-        }
+//            output[i][1] =  filter.movingWindowNext(output[i][1]);
+              System.out.println(output[i][1] +"");
+      }
         return output;
     }
     
@@ -96,7 +104,7 @@ public class DSPFunction {
             for(int j = 0; j < diffCoeff.length; j++){
                 output[i][1] = output[i][1] + (float)x[j] * (float)diffCoeff[j];
             }
-            logSignal(i);
+//            logSignal(i);
         }
         return output;
     }
@@ -116,7 +124,7 @@ public class DSPFunction {
                 xdelay3 = input[i-4][1];
             }
             output[i][1] = (0.1f) * (2 + xdelay1 - xdelay2 - (2 * xdelay3));
-            logSignal(i);
+//            logSignal(i);
         }
         return output;
     }
@@ -131,7 +139,7 @@ public class DSPFunction {
 
     
     private static void logSignal(int i){
-        System.out.println("signal["+i+"]" + "\t\t\t" + input[i][1] + "\t\t"+ output[i][1]);
+//        System.out.println("signal["+i+"]" + "\t\t\t" + input[i][1] + "\t\t"+ output[i][1]);
     }
     
     private static double[][] initializeOutputArray() {
@@ -140,5 +148,31 @@ public class DSPFunction {
             output[i][0] = input[i][0];
         }
         return output;
+    }
+    
+    public static ArrayList<Integer> detectRPeaks(){
+        int upflag = 0;
+        rpeaksI = new ArrayList<>();
+        
+        for(int i = 0; i < input.length; i++){
+            if(upflag == 0){
+                if(output[i][1] > 1){
+                    rpeaksI.add(i);
+                    upflag = 20;
+                }
+            }else upflag--;
+        }
+        System.out.println("R peaks: " + rpeaksI);
+        
+        return rpeaksI;
+    }
+    
+    public static int calculateBPM(){
+        int bpm = 0;
+        double duration = input[input.length-1][0];
+        System.out.println("duration: " + duration);
+        int beats = rpeaksI.size();  
+        bpm = (int)Math.round((beats*60)/(duration/1000.0));
+        return bpm;
     }
 }

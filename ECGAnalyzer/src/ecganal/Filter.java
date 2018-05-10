@@ -133,7 +133,7 @@ public class Filter {
     }
 
     public double squareNext(double upVal){
-        return Math.pow(upVal, 2) ;
+        return Math.pow(upVal, 2.0) ;
     }
 
 
