@@ -1,5 +1,7 @@
 package ecganal;
 
+import ecganal.Model.FixedQueue;
+
 public class Filter {
 
     private static final String TAG = "Debugging TAG";

@@ -1,4 +1,4 @@
-package ecganal;
+package ecganal.Model;
 
 import java.util.LinkedList;
 
