@@ -19,14 +19,14 @@ public class ECGAnalyzer {
     }
     
     public void analyzeData(String s, ECGAnalysisCallback callback){
-        ECGSummary summary = new ECGSummary();
+        setData(s);
         
-        setData(s);                                                 //1. Signal Processing
-        sigProcess.execute(DSPFunction.Type.ALL, getData());
+        ECGSummary summary = new ECGSummary(data);                                                 
+        sigProcess.execute(DSPFunction.Type.ALL, data);
         
-        sigProcess.detectRPeaks();                                  //2. Detection
-
-        summary.setBPM(sigProcess.calculateBPM());                  //3. ECG Summary
+        summary.setrIndices(sigProcess.detectRPeaks());
+        summary.setBPM(sigProcess.calculateBPM()); 
+        
         callback.onSuccess(summary);
     }
     
@@ -37,7 +37,7 @@ public class ECGAnalyzer {
         for(String line : dataline){
             String[] xydata = line.split(",");
             data[i][0] = Integer.parseInt(xydata[0]);
-            data[i][1] = Integer.parseInt(xydata[1])/1024f * 5;
+            data[i][1] = Double.parseDouble(xydata[1])/1024f * 5;
 //            System.out.println("data loaded: " + data[i][0] + " " + data[i][1]);
             i++;
         }
@@ -45,9 +45,5 @@ public class ECGAnalyzer {
     
     private static void setData(double[][] data){
         ECGAnalyzer.data = data;
-    }
-    
-    private static double[][] getData(){
-        return data;
     }
 }

@@ -154,6 +154,7 @@ public class DSPFunction {
     public ArrayList<Integer> detectRPeaks(){
         int upflag = 0;
         rpeaksI = new ArrayList<>();
+        ArrayList<Integer> rpeaksInterval = new ArrayList<>();
         
         for(int i = 0; i < input.length; i++){
             if(upflag == 0){
@@ -163,16 +164,17 @@ public class DSPFunction {
                 }
             }else upflag--;
         }
-//        System.out.println("R peaks: " + rpeaksI);
+        System.out.println("R peaks: " + rpeaksI);
         
         return rpeaksI;
     }
     
     public int calculateBPM(){
         int bpm = 0;
-        double duration = input[input.length-1][0];
-//        System.out.println("duration: " + duration);
-        int beats = rpeaksI.size();  
+        double firstRpeakTime = input[rpeaksI.get(0)][0];
+        double lastRpeakTime = input[rpeaksI.get(rpeaksI.size()-1)][0];
+        double duration = lastRpeakTime - firstRpeakTime;
+        int beats = rpeaksI.size() - 1;  
         bpm = (int)Math.round((beats*60)/(duration/1000.0));
         return bpm;
     }
