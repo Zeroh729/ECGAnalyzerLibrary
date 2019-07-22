@@ -13,6 +13,9 @@ public class ECGSummary {
     private int bpm;
     private int pqInterval;
     private int qrsDuration;
+    private int deviatingRRIcount;
+    private static final int RRI_MS_MIN = 600;
+    private static final int RRI_MS_MAX = 1200;
 
     public ECGSummary(double[][] originalData) {
         this.originalData = originalData;
@@ -44,14 +47,22 @@ public class ECGSummary {
 
     public void setrIndices(ArrayList<Integer> rIndices) {
         this.rIndices = rIndices;
+        deviatingRRIcount = 0;
         for(int i = 1; i < rIndices.size(); i++){
             int interval = (int)(originalData[rIndices.get(i)][0] - originalData[rIndices.get(i-1)][0]);
+            if(interval < RRI_MS_MIN || interval > RRI_MS_MAX){
+                deviatingRRIcount++;
+            }
             this.rrIntervals.add(interval);
         }
     }
     
     public ArrayList<Integer> getRRIntervals(){
         return rrIntervals;
+    }
+    
+    public int getDeviatingRRIcount(){
+        return deviatingRRIcount;
     }
 
     public ArrayList<Integer> getsIndices() {
